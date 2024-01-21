@@ -2,6 +2,6 @@
 
 int main()
 {
-    Shape::drawShape();
+    Map::map();
     return 0;
 }

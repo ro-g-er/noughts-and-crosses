@@ -1,10 +1,13 @@
 #ifndef NOUGHTS_AND_CROSSES_MAP_H
 #define NOUGHTS_AND_CROSSES_MAP_H
 
+#include <vector>
 
-class Shape {
+
+
+class Map {
 public:
-    static void drawShape();
+    static void map();
 };
 
 

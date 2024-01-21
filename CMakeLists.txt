@@ -9,7 +9,7 @@ FetchContent_Declare(SFML
 FetchContent_MakeAvailable(SFML)
 
 # Add source files
-set(SOURCE_FILES src/main.cpp src/map.cpp src/map.h)
+set(SOURCE_FILES src/main.cpp src/map.cpp src/map.h src/Game.cpp src/Game.h)
 
 # Add executable target with source files listed in SOURCE_FILES variable
 add_executable(noughts_and_crosses ${SOURCE_FILES})
