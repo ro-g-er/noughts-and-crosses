@@ -1,7 +1,8 @@
-#include "map.h"
+#include "game.h"
 
 int main()
 {
-    Map::map();
+    Game game{};
+    game.run();
     return 0;
 }
