@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 23)            # Enable c++23 standard
 find_package(SFML 2.5 COMPONENTS graphics audio window system REQUIRED)
 
 # Add source files
-set(SOURCE_FILES src/main.cpp src/game.cpp src/game.h
+set(SOURCE_FILES src/main.cpp src/Game.cpp src/Game.h
 )
 
 # Add executable target with source files listed in SOURCE_FILES variable
