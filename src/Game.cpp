@@ -7,7 +7,10 @@ Game::Game() : window(sf::VideoMode(600, 600), "Noughts and Crosses"), gameState
 
     if (!font.loadFromFile("../src/ethn.otf")) {
         std::cerr << "Error loading font" << std::endl;
-    }
+        exit(EXIT_FAILURE);
+    } else {
+        std::cout << "Font loaded successfully" << std::endl;
+     }
 
     // Set up menu items
     std::array<std::string, 3> menuItems = { "Start Game", "Instructions", "Exit" };
@@ -54,9 +57,21 @@ void Game::run() {
     }
 }
 
+void Game::processEvents() {
+    sf::Event event{};
+    while (window.pollEvent(event)) {
+        if (event.type == sf::Event::Closed)
+            window.close();
+        if (event.type == sf::Event::MouseButtonPressed) {
+            if (gameState == GameState::MENU) {
+                handleMenuInput(event.mouseButton.button);
+            }
+        }
+    }
+}
+
 void Game::render() {
     window.clear(sf::Color(220, 220, 220));
-
     if (gameState == GameState::MENU) {
         drawMenu();
     } else if (gameState == GameState::PLAYING) {
@@ -65,6 +80,21 @@ void Game::render() {
     window.display();
 }
 
+void Game::handleMenuInput(sf::Mouse::Button button) {
+    if (button == sf::Mouse::Left) {
+        /*  specifically designed for handling 2D integer */
+        sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+        for (int i = 0; i < 3; ++i) {
+            if (menuText[i].getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+                if (i == 0) { // Start Game
+                    gameState = GameState::PLAYING;
+                } else if (i == 2) { // Exit
+                    window.close();
+                }
+            }
+        }
+    }
+}
 
 void Game::drawMenu() {
     for (const auto& text : menuText) {
@@ -77,7 +107,6 @@ void Game::drawGame() {
     for (auto &line: grid) {
         window.draw(line);
     }
-
     // Draw shapes on the board
     for (int row = 0; row < 3; ++row) {
         for (int col = 0; col < 3; ++col) {
@@ -93,34 +122,4 @@ void Game::drawGame() {
         }
     }
     window.display();
-}
-
-void Game::processEvents() {
-    sf::Event event{};
-    while (window.pollEvent(event)) {
-        if (event.type == sf::Event::Closed)
-            window.close();
-        if (event.type == sf::Event::MouseButtonPressed) {
-            if (gameState == GameState::MENU) {
-                handleMenuInput(event.mouseButton.button);
-            }
-        }
-    }
-}
-
-void Game::handleMenuInput(sf::Mouse::Button button) {
-    if (button == sf::Mouse::Left) {
-        /*  specifically designed for handling 2D integer */
-        sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-
-        for (int i = 0; i < 3; ++i) {
-            if (menuText[i].getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
-                if (i == 0) { // Start Game
-                    gameState = GameState::PLAYING;
-                } else if (i == 2) { // Exit
-                    window.close();
-                }
-            }
-        }
-    }
 }
