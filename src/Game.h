@@ -10,6 +10,15 @@
 #include <array>
 
 /**
+ * @brief Enum representing the different states of the game.
+ */
+enum class GameState {
+    MENU,
+    PLAYING,
+    GAME_OVER
+};
+
+/**
  * @brief Class representing the Noughts and Crosses game.
  */
 class Game {
@@ -19,7 +28,7 @@ private:
      */
     void processEvents();
     /**
-     * @brief Renders the game to the window.
+     * @brief Renders the game objects.
      */
     void render();
     /**
@@ -36,19 +45,44 @@ private:
      */
     void handleMenuInput(sf::Mouse::Button button);
     /**
-    * @brief Enum representing the different states of the game.
+     * @brief Initializes the game board with empty values.
+     */
+    void initializeBoard();
+    /**
+     * @brief Sets up the grid lines.
+     */
+    void setupGrid();
+    /**
+     * @brief Sets up the shapes for 'X' and 'O'.
+     */
+    void setupShapes();
+    /**
+    * @brief Loads the font from file.
+    * @throws std::runtime_error if the font cannot be loaded.
     */
-    enum class GameState { MENU, PLAYING, GAME_OVER } gameState;
+    void loadFont();
+    /**
+     * @brief Sets up the menu text using the loaded font.
+     */
+    void setupMenuText();
+    /**
+     * @brief Resets the game state and board.
+     */
+    void resetGame();
     sf::RenderWindow window;
     std::array<sf::RectangleShape, 4> grid;
     sf::CircleShape oShape;
     std::array<sf::RectangleShape, 2> xShape;
     sf::Font font;
     std::array<sf::Text, 3> menuText;
+    std::array<std::array<char, 3>, 3> board{}; // 'X', 'O', or ' '
+    GameState gameState;
+    bool isXTurn;
+    bool gameOver;
 public:
     /**
-     * @brief Constructs a Game object and set up grid and shapes.
-     */
+    * @brief Constructs a Game object and initializes the game.
+    */
     Game();
     /**
      * @brief Runs the game loop.
