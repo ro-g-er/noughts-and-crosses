@@ -57,9 +57,9 @@ private:
      */
     void setupShapes();
     /**
-    * @brief Loads the font from file.
-    * @throws std::runtime_error if the font cannot be loaded.
-    */
+     * @brief Loads the font from file.
+     * @throws std::runtime_error if the font cannot be loaded.
+     */
     void loadFont();
     /**
      * @brief Sets up the menu text using the loaded font.
@@ -69,6 +69,11 @@ private:
      * @brief Resets the game state and board.
      */
     void resetGame();
+    /**
+     * @brief Handles player input during the game.
+     * @param button The mouse button that was pressed.
+     */
+    void handlePlayerInput(sf::Mouse::Button button);
     sf::RenderWindow window;
     std::array<sf::RectangleShape, 4> grid;
     sf::CircleShape oShape;
@@ -81,8 +86,8 @@ private:
     bool gameOver;
 public:
     /**
-    * @brief Constructs a Game object and initializes the game.
-    */
+     * @brief Constructs a Game object and initializes the game.
+     */
     Game();
     /**
      * @brief Runs the game loop.

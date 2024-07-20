@@ -31,7 +31,7 @@ void Game::processEvents() {
             if (gameState == GameState::MENU) {
                 handleMenuInput(event.mouseButton.button);
             } else if (gameState == GameState::PLAYING) {
-                //handlePlayerInput(event.mouseButton.button, true);
+                handlePlayerInput(event.mouseButton.button);
             }
         }
     }
@@ -79,18 +79,22 @@ void Game::drawGame() {
     for (auto &line: grid) {
         window.draw(line);
     }
+
+
     // Draw shapes on the board
     for (int row = 0; row < board.size(); ++row) {
         for (int col = 0; col < board.size(); ++col) {
-            oShape.setPosition((float) col * 200.f + 20.f, (float) row * 200.f + 20.f);
-            window.draw(oShape);
-
-            xShape[0].setPosition((float) col * 200.f + 100.f, (float) row * 200.f + 100.f);
-            xShape[0].setRotation(45.f);
-            xShape[1].setPosition((float) col * 200.f + 100.f, (float) row * 200.f + 100.f);
-            xShape[1].setRotation(135.f);
-            window.draw(xShape[0]);
-            window.draw(xShape[1]);
+            if (board[row][col] == 'X') {
+                xShape[0].setPosition((float) col * 200.f + 100.f, (float) row * 200.f + 100.f);
+                xShape[0].setRotation(45.f);
+                xShape[1].setPosition((float) col * 200.f + 100.f, (float) row * 200.f + 100.f);
+                xShape[1].setRotation(135.f);
+                window.draw(xShape[0]);
+                window.draw(xShape[1]);
+            } else if (board[row][col] == 'O') {
+                oShape.setPosition((float) col * 200.f + 20.f, (float) row * 200.f + 20.f);
+                window.draw(oShape);
+            }
         }
     }
     window.display();
@@ -152,5 +156,18 @@ void Game::setupMenuText() {
         menuText[i].setCharacterSize(30);
         menuText[i].setFillColor(sf::Color::Black);
         menuText[i].setPosition(200.f, 150.f + (float) i * 50.f);
+    }
+}
+
+void Game::handlePlayerInput(sf::Mouse::Button button) {
+    if (button == sf::Mouse::Left && !gameOver) {
+        sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+        int row = mousePos.y / 200;
+        int col = mousePos.x / 200;
+
+        if (row < 3 && col < 3 && board[row][col] == ' ') {
+            board[row][col] = isXTurn ? 'X' : 'O';
+            isXTurn = !isXTurn;
+        }
     }
 }
