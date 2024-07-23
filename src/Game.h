@@ -22,7 +22,6 @@ enum class GameState {
  * @brief Class representing the Noughts and Crosses game.
  */
 class Game {
-private:
     /**
      * @brief Processes input events.
      */

@@ -3,9 +3,9 @@
 #include "Game.h"
 
 Game::Game() : window(sf::VideoMode(600, 600), "Noughts and Crosses"),
-                    isXTurn(true),
-                    gameOver(false),
-                    gameState(GameState::MENU) {
+               gameState(GameState::MENU),
+               isXTurn(true),
+               gameOver(false) {
 
     window.setFramerateLimit(60);
     loadFont();
@@ -75,15 +75,12 @@ void Game::drawMenu() {
 }
 
 void Game::drawGame() {
-    // Draw grid
     for (auto &line: grid) {
         window.draw(line);
     }
-
-
     // Draw shapes on the board
     for (int row = 0; row < board.size(); ++row) {
-        for (int col = 0; col < board.size(); ++col) {
+        for (int col = 0; col < board.at(0).size(); ++col) {
             if (board[row][col] == 'X') {
                 xShape[0].setPosition((float) col * 200.f + 100.f, (float) row * 200.f + 100.f);
                 xShape[0].setRotation(45.f);
@@ -101,7 +98,7 @@ void Game::drawGame() {
 }
 
 void Game::resetGame() {
-    initializeBoard(); // Reset the board using the initializeBoard method
+    initializeBoard(); /* Reset the board */
     isXTurn = true;
     gameOver = false;
 }
@@ -119,7 +116,6 @@ void Game::setupGrid() {
         grid[i].setSize(sf::Vector2f(10.f, 600.f));
         grid[i].setPosition(200.f * ((float) i + 1) - 5, 0.f);
     }
-
     // horizontal grid lines
     for (int i = 2; i < 4; ++i) {
         grid[i].setFillColor(sf::Color(64, 64, 64));  // Dark Gray
@@ -141,7 +137,7 @@ void Game::setupShapes() {
 }
 
 void Game::loadFont() {
-    if (!font.loadFromFile("../src/ethn.otf")) {
+    if (!font.loadFromFile("../resources/ethn.otf")) {
         throw std::runtime_error("Error loading font");
     } else {
         std::cout << "Font loaded successfully" << std::endl;
@@ -168,6 +164,9 @@ void Game::handlePlayerInput(sf::Mouse::Button button) {
         if (row < 3 && col < 3 && board[row][col] == ' ') {
             board[row][col] = isXTurn ? 'X' : 'O';
             isXTurn = !isXTurn;
+            /*
+             * checkWinCondition();
+             * */
         }
     }
 }
