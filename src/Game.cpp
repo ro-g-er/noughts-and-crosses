@@ -56,15 +56,27 @@ void Game::render() {
 void Game::handleMenuInput(sf::Mouse::Button button) {
     if (button == sf::Mouse::Left) {
         sf::Vector2i mousePos = sf::Mouse::getPosition(window); /* specifically designed for handling 2D integer */
-        for (int i = 0; i < 3; ++i) {
-            if (menuText[i].getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
-                if (i == 0) { /* Start Game */
-                    gameState = GameState::PLAYING;
-                } else if (i == 2) { /* Exit */
-                    window.close();
-                }
+        for (int i = 0; i < menuText.size(); ++i) {
+            if (menuText.at(i).getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+                handleMenuSelection(i);
             }
         }
+    }
+}
+
+void Game::handleMenuSelection(int i) {
+    switch (i) {
+        case 0: /* Start Game */
+            gameState = GameState::PLAYING;
+            break;
+        case 1: /* Instructions */
+            std::cout << "Instructions" << std::endl;
+            break;
+        case 2: /* Exit */
+            window.close();
+            break;
+        default:
+            break;
     }
 }
 
@@ -83,11 +95,9 @@ void Game::drawGame() {
         for (int col = 0; col < board.at(0).size(); ++col) {
             if (board[row][col] == 'X') {
                 xShape[0].setPosition((float) col * 200.f + 100.f, (float) row * 200.f + 100.f);
-                xShape[0].setRotation(45.f);
                 xShape[1].setPosition((float) col * 200.f + 100.f, (float) row * 200.f + 100.f);
-                xShape[1].setRotation(135.f);
-                window.draw(xShape[0]);
-                window.draw(xShape[1]);
+                window.draw(xShape.at(0));
+                window.draw(xShape.at(1));
             } else if (board[row][col] == 'O') {
                 oShape.setPosition((float) col * 200.f + 20.f, (float) row * 200.f + 20.f);
                 window.draw(oShape);
@@ -134,6 +144,8 @@ void Game::setupShapes() {
         i.setFillColor(sf::Color::Black);
         i.setOrigin(80.f, 5.f);
     }
+    xShape[0].setRotation(45.f);
+    xShape[1].setRotation(135.f);
 }
 
 void Game::loadFont() {
@@ -161,7 +173,7 @@ void Game::handlePlayerInput(sf::Mouse::Button button) {
         int row = mousePos.y / 200;
         int col = mousePos.x / 200;
 
-        if (row < 3 && col < 3 && board[row][col] == ' ') {
+        if (row < numRows && col < numColumns && board[row][col] == ' ') {
             board[row][col] = isXTurn ? 'X' : 'O';
             isXTurn = !isXTurn;
             /*

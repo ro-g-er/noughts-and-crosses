@@ -9,6 +9,9 @@
 #include <SFML/Window/Mouse.hpp>
 #include <array>
 
+constexpr int numRows = 3;
+constexpr int numColumns = 3;
+
 /**
  * @brief Enum representing the different states of the game.
  */
@@ -17,7 +20,6 @@ enum class GameState {
     PLAYING,
     GAME_OVER
 };
-
 /**
  * @brief Class representing the Noughts and Crosses game.
  */
@@ -73,6 +75,11 @@ class Game {
      * @param button The mouse button that was pressed.
      */
     void handlePlayerInput(sf::Mouse::Button button);
+    /**
+     * @brief Handles the action associated with the given menu index selected.
+     * @param index The index of the menu item.
+     */
+    void handleMenuSelection(int i);
     sf::RenderWindow window;
     std::array<sf::RectangleShape, 4> grid;
     sf::CircleShape oShape;
