@@ -80,6 +80,35 @@ class Game {
      * @param index The index of the menu item.
      */
     void handleMenuSelection(int i);
+    /**
+     * @brief Checks the win condition for the game.
+     * @return true if there is a win or a draw, false otherwise.
+     */
+    int checkWinCondition();
+    /**
+     * @brief Checks if three characters are the same and not empty.
+     * @param a First character.
+     * @param b Second character.
+     * @param c Third character.
+     * @return true if all three characters are the same and not empty, false otherwise.
+     */
+    static bool checkLine(char a, char b, char c);
+    /**
+     * @brief Checks all rows for a win condition.
+     * @return true if any row has a win condition, false otherwise.
+     */
+    bool checkRows();
+    /**
+     * @brief Checks all columns for a win condition.
+     * @return true if any column has a win condition, false otherwise.
+     */
+    bool checkColumns();
+    /**
+     * @brief Checks both diagonals for a win condition.
+     * @return true if any diagonal has a win condition, false otherwise.
+     */
+    bool checkDiagonals();
+    //void displayWinner(char winner);
     sf::RenderWindow window;
     std::array<sf::RectangleShape, 4> grid;
     sf::CircleShape oShape;
@@ -90,6 +119,7 @@ class Game {
     GameState gameState;
     bool isXTurn;
     bool gameOver;
+    char winner; /* 'X', 'O' and 'D' (for Draw) */
 public:
     /**
      * @brief Constructs a Game object and initializes the game.

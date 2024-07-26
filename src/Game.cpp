@@ -47,7 +47,7 @@ void Game::render() {
             drawGame();
             break;
         case GameState::GAME_OVER:
-            // Draw game over screen or message
+            resetGame();
             break;
     }
     window.display();
@@ -111,6 +111,7 @@ void Game::resetGame() {
     initializeBoard(); /* Reset the board */
     isXTurn = true;
     gameOver = false;
+    gameState = (GameState::MENU);
 }
 
 void Game::initializeBoard() {
@@ -176,9 +177,41 @@ void Game::handlePlayerInput(sf::Mouse::Button button) {
         if (row < numRows && col < numColumns && board[row][col] == ' ') {
             board[row][col] = isXTurn ? 'X' : 'O';
             isXTurn = !isXTurn;
-            /*
-             * checkWinCondition();
-             * */
+            if (checkWinCondition()) {
+                // displayWinner()
+                resetGame();
+            }
         }
     }
+}
+
+int Game::checkWinCondition() {
+    return checkRows() || checkColumns() || checkDiagonals();
+}
+
+bool Game::checkRows() {
+    for (int row = 0; row < 3; ++row) {
+        if (checkLine(board[row][0], board[row][1], board[row][2])) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Game::checkLine(char a, char b, char c) {
+    return (a == b && b == c && a != ' ');
+}
+
+bool Game::checkColumns() {
+    for (int col = 0; col < 3; ++col) {
+        if (checkLine(board[0][col], board[1][col], board[2][col])) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool Game::checkDiagonals() {
+    return checkLine(board[0][0], board[1][1], board[2][2]) ||
+           checkLine(board[0][2], board[1][1], board[2][0]);
 }
