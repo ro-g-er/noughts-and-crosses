@@ -82,9 +82,9 @@ class Game {
     void handleMenuSelection(int i);
     /**
      * @brief Checks the win condition for the game.
-     * @return true if there is a win or a draw, false otherwise.
+     * @return The winning character ('X' or 'O') if there's a winner, otherwise ' '.
      */
-    int checkWinCondition();
+    char checkWinCondition();
     /**
      * @brief Checks if three characters are the same and not empty.
      * @param a First character.
@@ -94,21 +94,21 @@ class Game {
      */
     static bool checkLine(char a, char b, char c);
     /**
-     * @brief Checks all rows for a win condition.
-     * @return true if any row has a win condition, false otherwise.
-     */
-    bool checkRows();
-    /**
      * @brief Checks all columns for a win condition.
-     * @return true if any column has a win condition, false otherwise.
+    * @return The winning character ('X' or 'O') if there's a winner, otherwise ' '.
      */
-    bool checkColumns();
+    char checkColumns();
+    /**
+     * @brief Checks all rows for a win condition.
+     * @return The winning character if any row has a win condition, otherwise ' '.
+     */
+    char checkRows();
     /**
      * @brief Checks both diagonals for a win condition.
      * @return true if any diagonal has a win condition, false otherwise.
      */
-    bool checkDiagonals();
-    //void displayWinner(char winner);
+    char checkDiagonals();
+    static void displayWinner(char w);
     sf::RenderWindow window;
     std::array<sf::RectangleShape, 4> grid;
     sf::CircleShape oShape;

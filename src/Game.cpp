@@ -5,7 +5,8 @@
 Game::Game() : window(sf::VideoMode(600, 600), "Noughts and Crosses"),
                gameState(GameState::MENU),
                isXTurn(true),
-               gameOver(false) {
+               gameOver(false),
+               winner('D') {
 
     window.setFramerateLimit(60);
     loadFont();
@@ -173,45 +174,61 @@ void Game::handlePlayerInput(sf::Mouse::Button button) {
         sf::Vector2i mousePos = sf::Mouse::getPosition(window);
         int row = mousePos.y / 200;
         int col = mousePos.x / 200;
-
         if (row < numRows && col < numColumns && board[row][col] == ' ') {
             board[row][col] = isXTurn ? 'X' : 'O';
             isXTurn = !isXTurn;
-            if (checkWinCondition()) {
-                // displayWinner()
-                resetGame();
+            winner = checkWinCondition();
+            if (winner != ' ') {
+                gameOver = true;
+                displayWinner(winner);
+                gameState = GameState::GAME_OVER;
             }
         }
     }
 }
 
-int Game::checkWinCondition() {
-    return checkRows() || checkColumns() || checkDiagonals();
+void Game::displayWinner(char w) {
+    std::cout << "Player " << w << " wins!" << std::endl;
 }
 
-bool Game::checkRows() {
-    for (int row = 0; row < 3; ++row) {
-        if (checkLine(board[row][0], board[row][1], board[row][2])) {
-            return true;
+char Game::checkWinCondition() {
+    char w = checkRows();
+    if (w != ' ') return w;
+
+    w = checkColumns();
+    if (w != ' ') return w;
+
+    return checkDiagonals();
+}
+
+char Game::checkRows() {
+    for (const auto &row: board) {
+        if (checkLine(row[0], row[1], row[2])) {
+            return row[0];
         }
     }
-    return false;
+    return ' ';
+}
+
+char Game::checkColumns() {
+    for (int col = 0; col < 3; ++col) {
+        if (checkLine(board[0][col], board[1][col], board[2][col])) {
+            return board[0][col];
+        }
+    }
+    return ' ';
 }
 
 bool Game::checkLine(char a, char b, char c) {
     return (a == b && b == c && a != ' ');
 }
 
-bool Game::checkColumns() {
-    for (int col = 0; col < 3; ++col) {
-        if (checkLine(board[0][col], board[1][col], board[2][col])) {
-            return true;
-        }
+char Game::checkDiagonals() {
+    if (checkLine(board[0][0], board[1][1], board[2][2])) {
+        return board[0][0];
     }
-    return false;
-}
-
-bool Game::checkDiagonals() {
-    return checkLine(board[0][0], board[1][1], board[2][2]) ||
-           checkLine(board[0][2], board[1][1], board[2][0]);
+    if (checkLine(board[0][2], board[1][1], board[2][0])) {
+        return board[0][2];
+    }
+    return ' ';
 }
