@@ -21,6 +21,14 @@ enum class GameState {
     GAME_OVER
 };
 /**
+ * @brief Enum representing the different winner states.
+ */
+enum class Winner : char {
+    X = 'X',
+    O = 'O',
+    DRAW = ' '
+};
+/**
  * @brief Class representing the Noughts and Crosses game.
  */
 class Game {
@@ -84,7 +92,7 @@ class Game {
      * @brief Checks the win condition for the game.
      * @return The winning character ('X' or 'O') if there's a winner, otherwise ' '.
      */
-    char checkWinCondition();
+    enum Winner checkWinCondition();
     /**
      * @brief Checks if three characters are the same and not empty.
      * @param a First character.
@@ -92,34 +100,35 @@ class Game {
      * @param c Third character.
      * @return true if all three characters are the same and not empty, false otherwise.
      */
-    static bool checkLine(char a, char b, char c);
+    static bool checkLine(Winner a, Winner b, Winner c);
     /**
      * @brief Checks all columns for a win condition.
-    * @return The winning character ('X' or 'O') if there's a winner, otherwise ' '.
+     * @return The Winner enum of the winning character.
      */
-    char checkColumns();
+    enum Winner checkColumns();
     /**
      * @brief Checks all rows for a win condition.
-     * @return The winning character if any row has a win condition, otherwise ' '.
+     * @return The Winner enum if any row has a win condition, otherwise DRAW.
      */
-    char checkRows();
+    enum Winner checkRows();
     /**
      * @brief Checks both diagonals for a win condition.
-     * @return true if any diagonal has a win condition, false otherwise.
+     * @return enum if any diagonal has a win condition, false otherwise.
      */
-    char checkDiagonals();
-    static void displayWinner(char w);
+    enum Winner checkDiagonals();
+    static void displayWinner(Winner winner);
     sf::RenderWindow window;
     std::array<sf::RectangleShape, 4> grid;
     sf::CircleShape oShape;
     std::array<sf::RectangleShape, 2> xShape;
     sf::Font font;
     std::array<sf::Text, 3> menuText;
-    std::array<std::array<char, 3>, 3> board{}; // 'X', 'O', or ' '
+    std::array<std::array<Winner, numRows>, numColumns> board{};
     GameState gameState;
     bool isXTurn;
     bool gameOver;
-    char winner; /* 'X', 'O' and 'D' (for Draw) */
+    Winner winner;
+
 public:
     /**
      * @brief Constructs a Game object and initializes the game.

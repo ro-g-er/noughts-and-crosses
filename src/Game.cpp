@@ -6,7 +6,7 @@ Game::Game() : window(sf::VideoMode(600, 600), "Noughts and Crosses"),
                gameState(GameState::MENU),
                isXTurn(true),
                gameOver(false),
-               winner('D') {
+               winner(Winner::DRAW) {
 
     window.setFramerateLimit(60);
     loadFont();
@@ -94,12 +94,12 @@ void Game::drawGame() {
     // Draw shapes on the board
     for (int row = 0; row < board.size(); ++row) {
         for (int col = 0; col < board.at(0).size(); ++col) {
-            if (board[row][col] == 'X') {
+            if (board[row][col] == Winner::X) {
                 xShape[0].setPosition((float) col * 200.f + 100.f, (float) row * 200.f + 100.f);
                 xShape[1].setPosition((float) col * 200.f + 100.f, (float) row * 200.f + 100.f);
                 window.draw(xShape.at(0));
                 window.draw(xShape.at(1));
-            } else if (board[row][col] == 'O') {
+            } else if (board[row][col] == Winner::O) {
                 oShape.setPosition((float) col * 200.f + 20.f, (float) row * 200.f + 20.f);
                 window.draw(oShape);
             }
@@ -117,7 +117,7 @@ void Game::resetGame() {
 
 void Game::initializeBoard() {
     for (auto& row : board) {
-        row.fill(' ');
+        row.fill(Winner::DRAW);
     }
 }
 
@@ -174,11 +174,11 @@ void Game::handlePlayerInput(sf::Mouse::Button button) {
         sf::Vector2i mousePos = sf::Mouse::getPosition(window);
         int row = mousePos.y / 200;
         int col = mousePos.x / 200;
-        if (row < numRows && col < numColumns && board[row][col] == ' ') {
-            board[row][col] = isXTurn ? 'X' : 'O';
+        if (row < numRows && col < numColumns && board[row][col] == Winner::DRAW) {
+            board[row][col] = isXTurn ? Winner::X : Winner::O;
             isXTurn = !isXTurn;
             winner = checkWinCondition();
-            if (winner != ' ') {
+            if (winner != Winner::DRAW) {
                 gameOver = true;
                 displayWinner(winner);
                 gameState = GameState::GAME_OVER;
@@ -187,48 +187,57 @@ void Game::handlePlayerInput(sf::Mouse::Button button) {
     }
 }
 
-void Game::displayWinner(char w) {
-    std::cout << "Player " << w << " wins!" << std::endl;
+void Game::displayWinner(Winner w) {
+    if (w == Winner::X) {
+        std::cout << "Player X wins!" << std::endl;
+    } else if (w == Winner::O) {
+        std::cout << "Player O wins!" << std::endl;
+    } else {
+        std::cout << "It's a draw!" << std::endl;
+    }
 }
 
-char Game::checkWinCondition() {
-    char w = checkRows();
-    if (w != ' ') return w;
-
-    w = checkColumns();
-    if (w != ' ') return w;
+enum Winner Game::checkWinCondition() {
+    winner = checkRows();
+    if (winner != Winner::DRAW) {
+        return winner;
+    }
+    winner = checkColumns();
+    if (winner != Winner::DRAW) {
+        return winner;
+    }
 
     return checkDiagonals();
 }
 
-char Game::checkRows() {
+enum Winner Game::checkRows() {
     for (const auto &row: board) {
         if (checkLine(row[0], row[1], row[2])) {
-            return row[0];
+            return row.at(0);
         }
     }
-    return ' ';
+    return Winner::DRAW;
 }
 
-char Game::checkColumns() {
+enum Winner Game::checkColumns() {
     for (int col = 0; col < 3; ++col) {
         if (checkLine(board[0][col], board[1][col], board[2][col])) {
             return board[0][col];
         }
     }
-    return ' ';
+    return Winner::DRAW;
 }
 
-bool Game::checkLine(char a, char b, char c) {
-    return (a == b && b == c && a != ' ');
+bool Game::checkLine(enum Winner a, enum Winner b, enum Winner c) {
+    return (a == b && b == c && a != Winner::DRAW);
 }
 
-char Game::checkDiagonals() {
+enum Winner Game::checkDiagonals() {
     if (checkLine(board[0][0], board[1][1], board[2][2])) {
         return board[0][0];
     }
     if (checkLine(board[0][2], board[1][1], board[2][0])) {
         return board[0][2];
     }
-    return ' ';
+    return Winner::DRAW;
 }
