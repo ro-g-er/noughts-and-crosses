@@ -48,6 +48,7 @@ void Game::render() {
             drawGame();
             break;
         case GameState::GAME_OVER:
+            displayWinner();
             resetGame();
             break;
     }
@@ -180,24 +181,14 @@ void Game::handlePlayerInput(sf::Mouse::Button button) {
             winner = checkWinCondition();
             if (winner != Winner::DRAW) {
                 gameOver = true;
-                displayWinner(winner);
+                //displayWinner(winner);
                 gameState = GameState::GAME_OVER;
             }
         }
     }
 }
 
-void Game::displayWinner(Winner w) {
-    if (w == Winner::X) {
-        std::cout << "Player X wins!" << std::endl;
-    } else if (w == Winner::O) {
-        std::cout << "Player O wins!" << std::endl;
-    } else {
-        std::cout << "It's a draw!" << std::endl;
-    }
-}
-
-enum Winner Game::checkWinCondition() {
+Winner Game::checkWinCondition() {
     winner = checkRows();
     if (winner != Winner::DRAW) {
         return winner;
@@ -210,7 +201,7 @@ enum Winner Game::checkWinCondition() {
     return checkDiagonals();
 }
 
-enum Winner Game::checkRows() {
+Winner Game::checkRows() {
     for (const auto &row: board) {
         if (checkLine(row[0], row[1], row[2])) {
             return row.at(0);
@@ -219,7 +210,7 @@ enum Winner Game::checkRows() {
     return Winner::DRAW;
 }
 
-enum Winner Game::checkColumns() {
+Winner Game::checkColumns() {
     for (int col = 0; col < 3; ++col) {
         if (checkLine(board[0][col], board[1][col], board[2][col])) {
             return board[0][col];
@@ -232,7 +223,7 @@ bool Game::checkLine(enum Winner a, enum Winner b, enum Winner c) {
     return (a == b && b == c && a != Winner::DRAW);
 }
 
-enum Winner Game::checkDiagonals() {
+Winner Game::checkDiagonals() {
     if (checkLine(board[0][0], board[1][1], board[2][2])) {
         return board[0][0];
     }
@@ -240,4 +231,23 @@ enum Winner Game::checkDiagonals() {
         return board[0][2];
     }
     return Winner::DRAW;
+}
+
+void Game::displayWinner() {
+    std::string menuWinner{};
+    std::string menuItems = {"The winner is: "};
+
+    if (winner == Winner::X) {
+        menuItems = menuItems + 'X';
+        std::cout << "Player X wins!" << std::endl;
+    } else if (winner == Winner::O) {
+        std::cout << "Player O wins!" << std::endl;
+    } else {
+        std::cout << "It's a draw!" << std::endl;
+    }
+    gameoverText.setFont(font);
+    gameoverText.setString(menuItems);
+    gameoverText.setCharacterSize(30);
+    gameoverText.setFillColor(sf::Color::Black);
+    gameoverText.setPosition(200.f, 150.f + 50.f);
 }

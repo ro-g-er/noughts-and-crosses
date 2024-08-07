@@ -23,7 +23,7 @@ enum class GameState {
 /**
  * @brief Enum representing the different winner states.
  */
-enum class Winner : char {
+enum class Winner {
     X = 'X',
     O = 'O',
     DRAW = ' '
@@ -90,9 +90,9 @@ class Game {
     void handleMenuSelection(int i);
     /**
      * @brief Checks the win condition for the game.
-     * @return The winning character ('X' or 'O') if there's a winner, otherwise ' '.
+     * @return The winner enum of the winning player or draw.
      */
-    enum Winner checkWinCondition();
+    Winner checkWinCondition();
     /**
      * @brief Checks if three characters are the same and not empty.
      * @param a First character.
@@ -103,20 +103,24 @@ class Game {
     static bool checkLine(Winner a, Winner b, Winner c);
     /**
      * @brief Checks all columns for a win condition.
-     * @return The Winner enum of the winning character.
+     * @return The winner enum of the winning player.
      */
-    enum Winner checkColumns();
+    Winner checkColumns();
     /**
      * @brief Checks all rows for a win condition.
-     * @return The Winner enum if any row has a win condition, otherwise DRAW.
+     * @return The winner enum of the winning player.
      */
-    enum Winner checkRows();
+    Winner checkRows();
     /**
      * @brief Checks both diagonals for a win condition.
-     * @return enum if any diagonal has a win condition, false otherwise.
+     * @return The winner enum of the winning player.
      */
-    enum Winner checkDiagonals();
-    static void displayWinner(Winner winner);
+    Winner checkDiagonals();
+    /**
+     * @brief Display the winner or draw on screen.
+     * @param enum of the winning player.
+     */
+    void displayWinner();
     sf::RenderWindow window;
     std::array<sf::RectangleShape, 4> grid;
     sf::CircleShape oShape;
@@ -128,6 +132,7 @@ class Game {
     bool isXTurn;
     bool gameOver;
     Winner winner;
+    sf::Text gameoverText;
 
 public:
     /**
