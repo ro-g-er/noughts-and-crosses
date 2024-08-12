@@ -21,13 +21,28 @@ enum class GameState {
     GAME_OVER
 };
 /**
- * @brief Enum representing the different winner states.
+ * @brief Represents the winner of the game.
+ *
+ * This enum is used to indicate the final outcome of the game.
  */
 enum class Winner {
-    X = 'X',
-    O = 'O',
-    DRAW = ' '
+    X = 'X',    /**< Player X has won the game. */
+    O = 'O',    /**< Player O has won the game. */
+    DRAW = ' ', /**< The game ended in a draw. */
+    NONE = ' '  /**< The game is still ongoing or no winner has been determined. */
 };
+
+/**
+ * @brief Represents the state of a cell on the game board.
+ *
+ * This enum is used to mark each cell on the board with either X, O, or as EMPTY.
+ */
+enum class Mark {
+    X = 'X',    /**< Cell is marked by Player X. */
+    O = 'O',    /**< Cell is marked by Player O. */
+    EMPTY = ' ' /**< Cell is empty and unmarked. */
+};
+
 /**
  * @brief Class representing the Noughts and Crosses game.
  */
@@ -105,7 +120,7 @@ class Game {
      * @param c Third character.
      * @return true if all three characters are the same and not empty, false otherwise.
      */
-    static bool checkLine(Winner a, Winner b, Winner c);
+    static bool checkLine(Mark a, Mark b, Mark c);
     /**
      * @brief Checks all columns for a win condition.
      * @return The winner enum of the winning player.
@@ -127,14 +142,14 @@ class Game {
      */
     void drawWinner();
     void setupGameOver();
-    sf::RenderWindow window;
+    sf::RenderWindow window{sf::VideoMode(600, 600), "Noughts and Crosses"};
     std::array<sf::RectangleShape, 4> grid;
     sf::CircleShape oShape;
     std::array<sf::RectangleShape, 2> xShape;
     sf::Font font;
     std::array<sf::Text, 3> menuText;
     sf::Text menuWinner;
-    std::array<std::array<Winner, numRows>, numColumns> board{};
+    std::array<std::array<Mark, numRows>, numColumns> board{};
     GameState gameState;
     bool isXTurn;
     Winner winner;

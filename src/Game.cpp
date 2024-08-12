@@ -3,17 +3,28 @@
 #include <iostream>
 #include <sstream>
 
-Game::Game() : window(sf::VideoMode(600, 600), "Noughts and Crosses"),
-               gameState(GameState::MENU),
-               isXTurn(true),
-               winner(Winner::DRAW) {
+Winner markToWinner(Mark mark) {
+    switch (mark) {
+        case Mark::X:
+            return Winner::X;
+        case Mark::O:
+            return Winner::O;
+        case Mark::EMPTY:
+        default:
+            return Winner::NONE;
+    }
+}
 
+Game::Game() {
     window.setFramerateLimit(60);
     loadFont();
     setupGrid();
     setupShapes();
     setupMenuText();
     initializeBoard();
+    gameState = GameState::MENU;
+    winner = Winner::DRAW;
+    isXTurn = true;
 }
 
 void Game::run() {
@@ -90,18 +101,18 @@ void Game::drawMenu() {
 }
 
 void Game::drawGame() {
-    for (auto &line: grid) {
+    for (const auto &line: grid) {
         window.draw(line);
     }
     // Draw shapes on the board
     for (int row = 0; row < board.size(); ++row) {
         for (int col = 0; col < board.at(0).size(); ++col) {
-            if (board[row][col] == Winner::X) {
+            if (board[row][col] == Mark::X) {
                 xShape[0].setPosition((float) col * 200.f + 100.f, (float) row * 200.f + 100.f);
                 xShape[1].setPosition((float) col * 200.f + 100.f, (float) row * 200.f + 100.f);
                 window.draw(xShape.at(0));
                 window.draw(xShape.at(1));
-            } else if (board[row][col] == Winner::O) {
+            } else if (board[row][col] == Mark::O) {
                 oShape.setPosition((float) col * 200.f + 20.f, (float) row * 200.f + 20.f);
                 window.draw(oShape);
             }
@@ -118,7 +129,7 @@ void Game::resetGame() {
 
 void Game::initializeBoard() {
     for (auto& row : board) {
-        row.fill(Winner::DRAW);
+        row.fill(Mark::EMPTY);
     }
 }
 
@@ -188,8 +199,8 @@ void Game::handlePlayerInput(sf::Mouse::Button button) {
         sf::Vector2i mousePos = sf::Mouse::getPosition(window);
         int row = mousePos.y / 200;
         int col = mousePos.x / 200;
-        if (row < numRows && col < numColumns && board[row][col] == Winner::DRAW) {
-            board[row][col] = isXTurn ? Winner::X : Winner::O;
+        if (row < numRows && col < numColumns && board[row][col] == Mark::EMPTY) {
+            board[row][col] = isXTurn ? Mark::X : Mark::O;
             isXTurn = !isXTurn;
             winner = checkWinCondition();
             if (winner != Winner::DRAW) {
@@ -215,7 +226,7 @@ Winner Game::checkWinCondition() {
 Winner Game::checkRows() {
     for (const auto &row: board) {
         if (checkLine(row[0], row[1], row[2])) {
-            return row.at(0);
+            return markToWinner(row[0]);
         }
     }
     return Winner::DRAW;
@@ -224,22 +235,22 @@ Winner Game::checkRows() {
 Winner Game::checkColumns() {
     for (int col = 0; col < 3; ++col) {
         if (checkLine(board[0][col], board[1][col], board[2][col])) {
-            return board[0][col];
+            return markToWinner(board[0][col]);
         }
     }
     return Winner::DRAW;
 }
 
-bool Game::checkLine(enum Winner a, enum Winner b, enum Winner c) {
-    return (a == b && b == c && a != Winner::DRAW);
+bool Game::checkLine(Mark a, Mark b, Mark c) {
+    return (a == b && b == c && a != Mark::EMPTY);
 }
 
 Winner Game::checkDiagonals() {
     if (checkLine(board[0][0], board[1][1], board[2][2])) {
-        return board[0][0];
+        return markToWinner(board[0][0]);
     }
     if (checkLine(board[0][2], board[1][1], board[2][0])) {
-        return board[0][2];
+        return markToWinner(board[0][2]);
     }
     return Winner::DRAW;
 }
