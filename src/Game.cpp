@@ -1,11 +1,11 @@
-#include <iostream>
-#include <SFML/Window/Event.hpp>
 #include "Game.h"
+#include <SFML/Window/Event.hpp>
+#include <iostream>
+#include <sstream>
 
 Game::Game() : window(sf::VideoMode(600, 600), "Noughts and Crosses"),
                gameState(GameState::MENU),
                isXTurn(true),
-               gameOver(false),
                winner(Winner::DRAW) {
 
     window.setFramerateLimit(60);
@@ -33,6 +33,8 @@ void Game::processEvents() {
                 handleMenuInput(event.mouseButton.button);
             } else if (gameState == GameState::PLAYING) {
                 handlePlayerInput(event.mouseButton.button);
+            } else if (gameState == GameState::GAME_OVER) {
+                handleGameOver(event.mouseButton.button);
             }
         }
     }
@@ -48,8 +50,7 @@ void Game::render() {
             drawGame();
             break;
         case GameState::GAME_OVER:
-            displayWinner();
-            resetGame();
+            drawWinner();
             break;
     }
     window.display();
@@ -112,8 +113,7 @@ void Game::drawGame() {
 void Game::resetGame() {
     initializeBoard(); /* Reset the board */
     isXTurn = true;
-    gameOver = false;
-    gameState = (GameState::MENU);
+    gameState = GameState::MENU;
 }
 
 void Game::initializeBoard() {
@@ -170,8 +170,21 @@ void Game::setupMenuText() {
     }
 }
 
+void Game::setupGameOver() {
+    std::stringstream menuItems;
+    if (winner == Winner::X || winner == Winner::O)
+        menuItems << "THE WINNER IS: " << static_cast<char>(winner);
+    else
+        menuItems << "IT IS A DRAW";
+    gameOverText.setFont(font);
+    gameOverText.setString(menuItems.str());
+    gameOverText.setCharacterSize(30);
+    gameOverText.setFillColor(sf::Color::Black);
+    gameOverText.setPosition(200.f, 150.f + 50.f);
+}
+
 void Game::handlePlayerInput(sf::Mouse::Button button) {
-    if (button == sf::Mouse::Left && !gameOver) {
+    if (button == sf::Mouse::Left && gameState != GameState::GAME_OVER) {
         sf::Vector2i mousePos = sf::Mouse::getPosition(window);
         int row = mousePos.y / 200;
         int col = mousePos.x / 200;
@@ -180,8 +193,6 @@ void Game::handlePlayerInput(sf::Mouse::Button button) {
             isXTurn = !isXTurn;
             winner = checkWinCondition();
             if (winner != Winner::DRAW) {
-                gameOver = true;
-                //displayWinner(winner);
                 gameState = GameState::GAME_OVER;
             }
         }
@@ -233,21 +244,22 @@ Winner Game::checkDiagonals() {
     return Winner::DRAW;
 }
 
-void Game::displayWinner() {
-    std::string menuWinner{};
-    std::string menuItems = {"The winner is: "};
-
+void Game::drawWinner() {
+    setupGameOver();
     if (winner == Winner::X) {
-        menuItems = menuItems + 'X';
-        std::cout << "Player X wins!" << std::endl;
+        window.draw(gameOverText);
     } else if (winner == Winner::O) {
         std::cout << "Player O wins!" << std::endl;
     } else {
         std::cout << "It's a draw!" << std::endl;
     }
-    gameoverText.setFont(font);
-    gameoverText.setString(menuItems);
-    gameoverText.setCharacterSize(30);
-    gameoverText.setFillColor(sf::Color::Black);
-    gameoverText.setPosition(200.f, 150.f + 50.f);
+}
+
+void Game::handleGameOver(sf::Mouse::Button button) {
+    if (button == sf::Mouse::Left) {
+        sf::Vector2i mousePos = sf::Mouse::getPosition(window); /* specifically designed for handling 2D integer */
+        if (gameOverText.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+            resetGame();
+        }
+    }
 }

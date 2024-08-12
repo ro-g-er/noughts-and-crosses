@@ -84,6 +84,11 @@ class Game {
      */
     void handlePlayerInput(sf::Mouse::Button button);
     /**
+     * @brief Handles gameover.
+     * @param button The mouse button that was pressed.
+     */
+    void handleGameOver(sf::Mouse::Button button);
+    /**
      * @brief Handles the action associated with the given menu index selected.
      * @param index The index of the menu item.
      */
@@ -120,19 +125,20 @@ class Game {
      * @brief Display the winner or draw on screen.
      * @param enum of the winning player.
      */
-    void displayWinner();
+    void drawWinner();
+    void setupGameOver();
     sf::RenderWindow window;
     std::array<sf::RectangleShape, 4> grid;
     sf::CircleShape oShape;
     std::array<sf::RectangleShape, 2> xShape;
     sf::Font font;
     std::array<sf::Text, 3> menuText;
+    sf::Text menuWinner;
     std::array<std::array<Winner, numRows>, numColumns> board{};
     GameState gameState;
     bool isXTurn;
-    bool gameOver;
     Winner winner;
-    sf::Text gameoverText;
+    sf::Text gameOverText;
 
 public:
     /**
