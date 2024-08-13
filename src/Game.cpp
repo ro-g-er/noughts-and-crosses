@@ -23,7 +23,7 @@ Game::Game() {
     setupMenuText();
     initializeBoard();
     gameState = GameState::MENU;
-    winner = Winner::DRAW;
+    winner = Winner::NONE;
     isXTurn = true;
 }
 
@@ -125,6 +125,7 @@ void Game::resetGame() {
     initializeBoard(); /* Reset the board */
     isXTurn = true;
     gameState = GameState::MENU;
+    turnNumber = 0;
 }
 
 void Game::initializeBoard() {
@@ -183,15 +184,16 @@ void Game::setupMenuText() {
 
 void Game::setupGameOver() {
     std::stringstream menuItems;
-    if (winner == Winner::X || winner == Winner::O)
+    if (winner == Winner::X || winner == Winner::O) {
         menuItems << "THE WINNER IS: " << static_cast<char>(winner);
-    else
+    } else {
         menuItems << "IT IS A DRAW";
+    }
     gameOverText.setFont(font);
     gameOverText.setString(menuItems.str());
     gameOverText.setCharacterSize(30);
     gameOverText.setFillColor(sf::Color::Black);
-    gameOverText.setPosition(200.f, 150.f + 50.f);
+    gameOverText.setPosition(150.f, 100.f + 50.f);
 }
 
 void Game::handlePlayerInput(sf::Mouse::Button button) {
@@ -201,10 +203,13 @@ void Game::handlePlayerInput(sf::Mouse::Button button) {
         int col = mousePos.x / 200;
         if (row < numRows && col < numColumns && board[row][col] == Mark::EMPTY) {
             board[row][col] = isXTurn ? Mark::X : Mark::O;
+            turnNumber++;
             isXTurn = !isXTurn;
-            winner = checkWinCondition();
-            if (winner != Winner::DRAW) {
-                gameState = GameState::GAME_OVER;
+            if (turnNumber > 4) {
+                winner = checkWinCondition();
+                if (winner != Winner::NONE) {
+                    gameState = GameState::GAME_OVER;
+                }
             }
         }
     }
@@ -212,15 +217,21 @@ void Game::handlePlayerInput(sf::Mouse::Button button) {
 
 Winner Game::checkWinCondition() {
     winner = checkRows();
-    if (winner != Winner::DRAW) {
+    if (winner != Winner::NONE) {
         return winner;
     }
     winner = checkColumns();
-    if (winner != Winner::DRAW) {
+    if (winner != Winner::NONE) {
         return winner;
     }
-
-    return checkDiagonals();
+    winner = checkDiagonals();
+    if (winner != Winner::NONE) {
+        return winner;
+    }
+    if (turnNumber == 9) {
+        return Winner::DRAW;
+    }
+    return winner;
 }
 
 Winner Game::checkRows() {
@@ -229,7 +240,7 @@ Winner Game::checkRows() {
             return markToWinner(row[0]);
         }
     }
-    return Winner::DRAW;
+    return Winner::NONE;
 }
 
 Winner Game::checkColumns() {
@@ -238,7 +249,7 @@ Winner Game::checkColumns() {
             return markToWinner(board[0][col]);
         }
     }
-    return Winner::DRAW;
+    return Winner::NONE;
 }
 
 bool Game::checkLine(Mark a, Mark b, Mark c) {
@@ -252,18 +263,12 @@ Winner Game::checkDiagonals() {
     if (checkLine(board[0][2], board[1][1], board[2][0])) {
         return markToWinner(board[0][2]);
     }
-    return Winner::DRAW;
+    return Winner::NONE;
 }
 
 void Game::drawWinner() {
     setupGameOver();
-    if (winner == Winner::X) {
-        window.draw(gameOverText);
-    } else if (winner == Winner::O) {
-        std::cout << "Player O wins!" << std::endl;
-    } else {
-        std::cout << "It's a draw!" << std::endl;
-    }
+    window.draw(gameOverText);
 }
 
 void Game::handleGameOver(sf::Mouse::Button button) {

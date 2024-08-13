@@ -28,7 +28,7 @@ enum class GameState {
 enum class Winner {
     X = 'X',    /**< Player X has won the game. */
     O = 'O',    /**< Player O has won the game. */
-    DRAW = ' ', /**< The game ended in a draw. */
+    DRAW = 'D', /**< The game ended in a draw. */
     NONE = ' '  /**< The game is still ongoing or no winner has been determined. */
 };
 
@@ -99,7 +99,7 @@ class Game {
      */
     void handlePlayerInput(sf::Mouse::Button button);
     /**
-     * @brief Handles gameover.
+     * @brief Handles game over.
      * @param button The mouse button that was pressed.
      */
     void handleGameOver(sf::Mouse::Button button);
@@ -154,6 +154,7 @@ class Game {
     bool isXTurn;
     Winner winner;
     sf::Text gameOverText;
+    int turnNumber = 0;
 
 public:
     /**
