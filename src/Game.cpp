@@ -105,8 +105,8 @@ void Game::drawGame() {
         window.draw(line);
     }
     // Draw shapes on the board
-    for (int row = 0; row < board.size(); ++row) {
-        for (int col = 0; col < board.at(0).size(); ++col) {
+    for (int row = ROW_1; row < board.size(); ++row) {
+        for (int col = COL_1; col < board.at(COL_1).size(); ++col) {
             if (board[row][col] == Mark::X) {
                 xShape[0].setPosition((float) col * 200.f + 100.f, (float) row * 200.f + 100.f);
                 xShape[1].setPosition((float) col * 200.f + 100.f, (float) row * 200.f + 100.f);
@@ -173,12 +173,13 @@ void Game::loadFont() {
 
 void Game::setupMenuText() {
     std::array<std::string, 3> menuItems = { "Start Game", "Instructions", "Exit" };
-    for (int i = 0; i < 3; ++i) {
+    for (int i = 0; i < menuText.size(); ++i) {
         menuText[i].setFont(font);
         menuText[i].setString(menuItems[i]);
         menuText[i].setCharacterSize(30);
         menuText[i].setFillColor(sf::Color::Black);
-        menuText[i].setPosition(200.f, 150.f + (float) i * 50.f);
+        //menuText[i].setPosition(200.f, 150.f + (float) i * 50.f);
+        menuText[i].setPosition(MENU_X_POS, MENU_START_Y + (MENU_OFFSET_Y * (float) i));
     }
 }
 
@@ -205,7 +206,7 @@ void Game::handlePlayerInput(sf::Mouse::Button button) {
             board[row][col] = isXTurn ? Mark::X : Mark::O;
             turnNumber++;
             isXTurn = !isXTurn;
-            if (turnNumber > 4) {
+            if (turnNumber > WINNING_TURN_THRESHOLD) {
                 winner = checkWinCondition();
                 if (winner != Winner::NONE) {
                     gameState = GameState::GAME_OVER;
@@ -228,7 +229,7 @@ Winner Game::checkWinCondition() {
     if (winner != Winner::NONE) {
         return winner;
     }
-    if (turnNumber == 9) {
+    if (turnNumber == MAX_TURNS) {
         return Winner::DRAW;
     }
     return winner;
@@ -236,17 +237,17 @@ Winner Game::checkWinCondition() {
 
 Winner Game::checkRows() {
     for (const auto &row: board) {
-        if (checkLine(row[0], row[1], row[2])) {
-            return markToWinner(row[0]);
+        if (checkLine(row[ROW_1], row[ROW_2], row[ROW_3])) {
+            return markToWinner(row[ROW_1]);
         }
     }
     return Winner::NONE;
 }
 
 Winner Game::checkColumns() {
-    for (int col = 0; col < 3; ++col) {
-        if (checkLine(board[0][col], board[1][col], board[2][col])) {
-            return markToWinner(board[0][col]);
+    for (int col = COL_1; col < numColumns; ++col) {
+        if (checkLine(board[ROW_1][col], board[ROW_2][col], board[ROW_3][col])) {
+            return markToWinner(board[ROW_1][col]);
         }
     }
     return Winner::NONE;
@@ -257,11 +258,11 @@ bool Game::checkLine(Mark a, Mark b, Mark c) {
 }
 
 Winner Game::checkDiagonals() {
-    if (checkLine(board[0][0], board[1][1], board[2][2])) {
-        return markToWinner(board[0][0]);
+    if (checkLine(board[ROW_1][COL_1], board[ROW_2][COL_2], board[ROW_3][COL_3])) {
+        return markToWinner(board[0][COL_1]);
     }
-    if (checkLine(board[0][2], board[1][1], board[2][0])) {
-        return markToWinner(board[0][2]);
+    if (checkLine(board[ROW_1][COL_3], board[ROW_2][COL_2], board[ROW_3][COL_1])) {
+        return markToWinner(board[ROW_1][COL_3]);
     }
     return Winner::NONE;
 }

@@ -9,8 +9,78 @@
 #include <SFML/Window/Mouse.hpp>
 #include <array>
 
+/**
+ * @brief The number of rows on the game board.
+ *
+ * This constant defines the number of rows present on the game board. It is used to determine the
+ * vertical dimension of the board.
+ */
 constexpr int numRows = 3;
+/**
+ * @brief The number of columns on the game board.
+ *
+ * This constant defines the number of columns present on the game board. It is used to determine the
+ * horizontal dimension of the board.
+ */
 constexpr int numColumns = 3;
+
+/**
+ * @brief Index of the first row (0-based index).
+ */
+constexpr int ROW_1 = 0;
+/**
+ * @brief Index of the second row (1-based index).
+ */
+constexpr int ROW_2 = 1;
+/**
+ * @brief Index of the third row (2-based index).
+ */
+constexpr int ROW_3 = 2;
+
+/**
+ * @brief Index of the first column (0-based index).
+ */
+constexpr int COL_1 = 0;
+/**
+ * @brief Index of the second column (1-based index).
+ */
+constexpr int COL_2 = 1;
+/**
+ * @brief Index of the third column (2-based index).
+ */
+constexpr int COL_3 = 2;
+
+/**
+ * @brief The vertical starting position of menu items.
+ *
+ * This constant defines the vertical offset from the top of the window where the menu items will start.
+ * It is used to position the menu items in a vertical arrangement.
+ */
+constexpr float MENU_START_Y = 200.f;
+/**
+ * @brief The vertical offset between consecutive menu items.
+ *
+ * This constant determines the spacing between the menu items. It helps in arranging the menu items
+ * vertically with consistent spacing.
+ */
+constexpr float MENU_OFFSET_Y = 50.f;
+/**
+ * @brief The horizontal position of the menu items.
+ *
+ * This constant sets the horizontal position where the menu items will be displayed. It is used for
+ * aligning the menu items horizontally in the window.
+ */
+constexpr float MENU_X_POS = 150.f;
+/**
+ * @brief The minimum number of turns required before checking for a winning condition.
+ *
+ * This helps to optimize the game by not checking for a win until it's possible.
+ */
+constexpr int WINNING_TURN_THRESHOLD = 4;
+/**
+ * @brief The maximum number of turns in the game, representing a full board without a winner.
+ */
+constexpr int MAX_TURNS = 9;
 
 /**
  * @brief Enum representing the different states of the game.
@@ -21,7 +91,7 @@ enum class GameState {
     GAME_OVER
 };
 /**
- * @brief Represents the winner of the game.
+ * @brief Enum representing the winner of the game.
  *
  * This enum is used to indicate the final outcome of the game.
  */
@@ -33,7 +103,7 @@ enum class Winner {
 };
 
 /**
- * @brief Represents the state of a cell on the game board.
+ * @brief Enum representing the state of a cell on the game board.
  *
  * This enum is used to mark each cell on the board with either X, O, or as EMPTY.
  */
@@ -48,30 +118,10 @@ enum class Mark {
  */
 class Game {
     /**
-     * @brief Processes input events.
+     * @brief Loads the font from file.
+     * @throws std::runtime_error if the font cannot be loaded.
      */
-    void processEvents();
-    /**
-     * @brief Renders the game objects.
-     */
-    void render();
-    /**
-     * @brief Draws the main menu.
-     */
-    void drawMenu();
-    /**
-     * @brief Draws the game board and pieces.
-     */
-    void drawGame();
-    /**
-     * @brief Handles input in the menu.
-     * @param button The mouse button that was pressed.
-     */
-    void handleMenuInput(sf::Mouse::Button button);
-    /**
-     * @brief Initializes the game board with empty values.
-     */
-    void initializeBoard();
+    void loadFont();
     /**
      * @brief Sets up the grid lines.
      */
@@ -81,18 +131,31 @@ class Game {
      */
     void setupShapes();
     /**
-     * @brief Loads the font from file.
-     * @throws std::runtime_error if the font cannot be loaded.
-     */
-    void loadFont();
-    /**
      * @brief Sets up the menu text using the loaded font.
      */
     void setupMenuText();
     /**
+     * @brief Initializes the game board with empty values.
+     */
+    void initializeBoard();
+    /**
      * @brief Resets the game state and board.
      */
     void resetGame();
+    /**
+     * @brief Processes input events.
+     */
+    void processEvents();
+    /**
+     * @brief Renders the game objects.
+     */
+    void render();
+    /**
+     * @brief Handles input in the menu.
+     * @param button The mouse button that was pressed.
+     */
+    void handleMenuInput(sf::Mouse::Button button);
+
     /**
      * @brief Handles player input during the game.
      * @param button The mouse button that was pressed.
@@ -108,6 +171,22 @@ class Game {
      * @param index The index of the menu item.
      */
     void handleMenuSelection(int i);
+    /**
+     * @brief Draws the main menu.
+     */
+    void drawMenu();
+    /**
+     * @brief Draws the game board and pieces.
+     */
+    void drawGame();
+    /**
+     * @brief Display the winner or draw on screen.
+     */
+    void drawWinner();
+    /**
+     * @brief Sets up winner text.
+     */
+    void setupGameOver();
     /**
      * @brief Checks the win condition for the game.
      * @return The winner enum of the winning player or draw.
@@ -136,12 +215,6 @@ class Game {
      * @return The winner enum of the winning player.
      */
     Winner checkDiagonals();
-    /**
-     * @brief Display the winner or draw on screen.
-     * @param enum of the winning player.
-     */
-    void drawWinner();
-    void setupGameOver();
     sf::RenderWindow window{sf::VideoMode(600, 600), "Noughts and Crosses"};
     std::array<sf::RectangleShape, 4> grid;
     sf::CircleShape oShape;
