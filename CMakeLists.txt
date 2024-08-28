@@ -17,8 +17,5 @@ target_compile_features(noughts_and_crosses PRIVATE cxx_std_23)
 
 install(TARGETS noughts_and_crosses)
 
-# Add GTest
-#add_subdirectory(third_party/Google_tests)
-
 # Add tests
-#add_subdirectory(tests)
+add_subdirectory(tests)
