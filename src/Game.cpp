@@ -21,6 +21,7 @@ Game::Game() {
     setupGrid();
     setupShapes();
     setupMenuText();
+    setupInstructionsText();
     initializeBoard();
     gameState = GameState::MENU;
     winner = Winner::NONE;
@@ -46,16 +47,21 @@ void Game::processEvents() {
                 handlePlayerInput(event.mouseButton.button);
             } else if (gameState == GameState::GAME_OVER) {
                 handleGameOver(event.mouseButton.button);
+            } else if (gameState == GameState::INSTRUCTIONS) {
+                handleInstructions(event.mouseButton.button);
             }
         }
     }
 }
 
 void Game::render() {
-    window.clear(sf::Color(220, 220, 220));
+    window.clear(sf::Color(18, 18, 18));//220
     switch (gameState) {
         case GameState::MENU:
             drawMenu();
+            break;
+        case GameState::INSTRUCTIONS:
+            drawInstructions();
             break;
         case GameState::PLAYING:
             drawGame();
@@ -84,7 +90,7 @@ void Game::handleMenuSelection(int i) {
             gameState = GameState::PLAYING;
             break;
         case 1: /* Instructions */
-            std::cout << "Instructions" << std::endl;
+            gameState = GameState::INSTRUCTIONS;
             break;
         case 2: /* Exit */
             window.close();
@@ -113,7 +119,7 @@ void Game::drawGame() {
                 window.draw(xShape.at(0));
                 window.draw(xShape.at(1));
             } else if (board[row][col] == Mark::O) {
-                oShape.setPosition((float) col * 200.f + 20.f, (float) row * 200.f + 20.f);
+                oShape.setPosition((float) col * 200.f + 25.f, (float) row * 200.f + 25.f);
                 window.draw(oShape);
             }
         }
@@ -137,26 +143,26 @@ void Game::initializeBoard() {
 void Game::setupGrid() {
     // vertical grid lines
     for (int i = 0; i < 2; ++i) {
-        grid[i].setFillColor(sf::Color(64, 64, 64));  // Dark Gray
+        grid[i].setFillColor(sf::Color(47, 79, 79));// 64
         grid[i].setSize(sf::Vector2f(10.f, 600.f));
         grid[i].setPosition(200.f * ((float) i + 1) - 5, 0.f);
     }
     // horizontal grid lines
     for (int i = 2; i < 4; ++i) {
-        grid[i].setFillColor(sf::Color(64, 64, 64));  // Dark Gray
+        grid[i].setFillColor(sf::Color(47, 79, 79));// 64
         grid[i].setSize(sf::Vector2f(600.f, 10.f));
         grid[i].setPosition(0.f, 200.f * ((float) i - 1) - 5);
     }
 }
 
 void Game::setupShapes() {
-    oShape.setRadius(80.f);
+    oShape.setRadius(75.f);
     oShape.setFillColor(sf::Color::Transparent);
-    oShape.setOutlineColor(sf::Color(0, 0, 139));  // Dark Blue
+    oShape.setOutlineColor(sf::Color(192, 192, 192));// Dark Blue - 0.0.139
     oShape.setOutlineThickness(10.f);
     for (auto & i : xShape) {
         i.setSize(sf::Vector2f(160.f, 10.f));
-        i.setFillColor(sf::Color::Black);
+        i.setFillColor(sf::Color(192, 192, 192));//Black
         i.setOrigin(80.f, 5.f);
     }
     xShape[0].setRotation(45.f);
@@ -173,12 +179,11 @@ void Game::loadFont() {
 
 void Game::setupMenuText() {
     std::array<std::string, 3> menuItems = { "Start Game", "Instructions", "Exit" };
-    for (int i = 0; i < menuText.size(); ++i) {
+    for (int i = 0; i < menuText.size(); i++) {
         menuText[i].setFont(font);
         menuText[i].setString(menuItems[i]);
         menuText[i].setCharacterSize(30);
-        menuText[i].setFillColor(sf::Color::Black);
-        //menuText[i].setPosition(200.f, 150.f + (float) i * 50.f);
+        menuText[i].setFillColor(sf::Color(211, 211, 211));//Black
         menuText[i].setPosition(MENU_X_POS, MENU_START_Y + (MENU_OFFSET_Y * (float) i));
     }
 }
@@ -193,12 +198,12 @@ void Game::setupGameOver() {
     gameOverText.setFont(font);
     gameOverText.setString(menuItems.str());
     gameOverText.setCharacterSize(30);
-    gameOverText.setFillColor(sf::Color::Black);
-    gameOverText.setPosition(150.f, 100.f + 50.f);
+    gameOverText.setFillColor(sf::Color(255, 255, 255));
+    gameOverText.setPosition(100.f, 150.f + 50.f);
 }
 
 void Game::handlePlayerInput(sf::Mouse::Button button) {
-    if (button == sf::Mouse::Left && gameState != GameState::GAME_OVER) {
+    if (button == sf::Mouse::Left && gameState == GameState::PLAYING) {
         sf::Vector2i mousePos = sf::Mouse::getPosition(window);
         int row = mousePos.y / 200;
         int col = mousePos.x / 200;
@@ -279,4 +284,46 @@ void Game::handleGameOver(sf::Mouse::Button button) {
             resetGame();
         }
     }
+}
+
+void Game::handleInstructions(sf::Mouse::Button button) {
+    if (button == sf::Mouse::Left) {
+        sf::Vector2i mousePos = sf::Mouse::getPosition(window); /* specifically designed for handling 2D integer */
+        if (instructionsText.getGlobalBounds().contains(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y))) {
+            gameState = GameState::MENU;
+        }
+    }
+}
+
+void Game::setupInstructionsText() {
+    std::string instructions =
+            "Welcome to Noughts and Crosses!\n\n"
+            "The goal of the game is to align three\n"
+            "of your marks (X or O) in a row, column\n"
+            "or diagonal before your opponent.\n\n"
+            "How to Play:\n"
+            "- Click on any empty square in the grid\n"
+            " to place your mark.\n"
+            "- The first player to align three\n"
+            " of their marks in a row, column,\n"
+            " or diagonal wins the game.\n"
+            "- If all nine squares are filled without\n"
+            " any player achieving a line,\n"
+            " the game ends in a draw.\n\n"
+            "Returning to Menu:\n"
+            "To return to the main menu, press\n"
+            "the Back button\n"
+            "or the Escape key at any time.\n\n"
+            "Good luck, and enjoy the game!";
+
+    instructionsText.setFont(font);
+    instructionsText.setString(instructions);
+    instructionsText.setCharacterSize(18);
+    instructionsText.setFillColor(sf::Color::White);// Dark Mode Color
+    instructionsText.setPosition(30.f, 20.f);
+    instructionsText.setLineSpacing(1.3f);
+}
+
+void Game::drawInstructions() {
+    window.draw(instructionsText);
 }

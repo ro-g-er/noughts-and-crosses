@@ -87,6 +87,7 @@ constexpr int MAX_TURNS = 9;
  */
 enum class GameState {
     MENU,
+    INSTRUCTIONS,
     PLAYING,
     GAME_OVER
 };
@@ -183,6 +184,8 @@ class Game {
      * @brief Display the winner or draw on screen.
      */
     void drawWinner();
+
+    void drawInstructions();
     /**
      * @brief Sets up winner text.
      */
@@ -215,6 +218,9 @@ class Game {
      * @return The winner enum of the winning player.
      */
     Winner checkDiagonals();
+
+    void setupInstructionsText();
+
     sf::RenderWindow window{sf::VideoMode(600, 600), "Noughts and Crosses"};
     std::array<sf::RectangleShape, 4> grid;
     sf::CircleShape oShape;
@@ -228,6 +234,7 @@ class Game {
     Winner winner;
     sf::Text gameOverText;
     int turnNumber = 0;
+    sf::Text instructionsText;
 
 public:
     /**
@@ -238,6 +245,7 @@ public:
      * @brief Runs the game loop.
      */
     void run();
+    void handleInstructions(sf::Mouse::Button button);
 };
 
 #endif //NOUGHTS_AND_CROSSES_GAME_H
