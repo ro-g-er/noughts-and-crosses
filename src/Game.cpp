@@ -297,7 +297,6 @@ void Game::handleInstructions(sf::Mouse::Button button) {
 
 void Game::setupInstructionsText() {
     std::string instructions =
-            "Welcome to Noughts and Crosses!\n\n"
             "The goal of the game is to align three\n"
             "of your marks (X or O) in a row, column\n"
             "or diagonal before your opponent.\n\n"
