@@ -16,6 +16,8 @@ Winner markToWinner(Mark mark) {
 }
 
 Game::Game() {
+#ifndef TEST
+    window.create(sf::VideoMode(600, 600), "Noughts and Crosses");
     window.setFramerateLimit(60);
     loadFont();
     setupGrid();
@@ -23,6 +25,7 @@ Game::Game() {
     setupMenuText();
     setupInstructionsText();
     initializeBoard();
+#endif
     gameState = GameState::MENU;
     winner = Winner::NONE;
     isXTurn = true;
@@ -170,7 +173,13 @@ void Game::setupShapes() {
 }
 
 void Game::loadFont() {
-    if (!font.loadFromFile("../resources/ethn.otf")) {
+    std::string fileName;
+#ifndef TEST
+    fileName = "../resources/ethn.otf";
+#else
+    fileName = "../../resources/ethn.otf";
+#endif
+    if (!font.loadFromFile(fileName)) {
         throw std::runtime_error("Error loading font");
     } else {
         std::cout << "Font loaded successfully" << std::endl;
@@ -325,4 +334,16 @@ void Game::setupInstructionsText() {
 
 void Game::drawInstructions() {
     window.draw(instructionsText);
+}
+
+bool Game::getIsXTurn() const {
+    return isXTurn;
+}
+
+int Game::getTurnNumber() const {
+    return turnNumber;
+}
+
+GameState Game::getGameState() const {
+    return gameState;
 }

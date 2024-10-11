@@ -140,10 +140,6 @@ class Game {
      */
     void initializeBoard();
     /**
-     * @brief Resets the game state and board.
-     */
-    void resetGame();
-    /**
      * @brief Processes input events.
      */
     void processEvents();
@@ -221,7 +217,7 @@ class Game {
 
     void setupInstructionsText();
 
-    sf::RenderWindow window{sf::VideoMode(600, 600), "Noughts and Crosses"};
+    sf::RenderWindow window;
     std::array<sf::RectangleShape, 4> grid;
     sf::CircleShape oShape;
     std::array<sf::RectangleShape, 2> xShape;
@@ -246,6 +242,13 @@ public:
      */
     void run();
     void handleInstructions(sf::Mouse::Button button);
+    /**
+     * @brief Resets the game state and board.
+     */
+    void resetGame();
+    bool getIsXTurn() const;
+    int getTurnNumber() const;
+    GameState getGameState() const;
 };
 
 #endif //NOUGHTS_AND_CROSSES_GAME_H

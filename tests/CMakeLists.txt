@@ -1,5 +1,10 @@
 add_executable(AllTests
-        main.cpp)
+        main.cpp
+        GameTests.cpp
+        GameTests.h
+        ../src/Game.cpp
+        ../src/Game.h)
+target_compile_definitions(AllTests PRIVATE TEST=1)
 include(FetchContent)
 FetchContent_Declare(
         googletest
@@ -8,4 +13,5 @@ FetchContent_Declare(
 # For Windows: Prevent overriding the parent project's compiler/linker settings
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
-target_link_libraries(AllTests gtest gtest_main gmock_main)
+target_link_libraries(AllTests gtest gtest_main gmock_main sfml-graphics sfml-audio sfml-window sfml-system)
+

@@ -21,7 +21,12 @@ jobs:
         run: sudo apt-get install libgtest-dev && cd /usr/src/gtest && sudo cmake CMakeLists.txt && sudo make && sudo cp lib/*.a /usr/lib && sudo ln -s /usr/lib/libgtest.a /usr/local/lib/libgtest.a && sudo ln -s /usr/lib/libgtest_main.a /usr/local/lib/libgtest_main.a
       - uses: actions/checkout@v4
       - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install -y libsfml-dev libfreetype6-dev libx11-dev libxrandr-dev libudev-dev libgl1-mesa-dev libflac-dev libogg-dev libvorbis-dev libvorbisenc2 libvorbisfile3 libopenal-dev libpthread-stubs0-dev libxcursor-dev
+        run: sudo apt-get update && sudo apt-get install -y libsfml-dev libfreetype6-dev libx11-dev libxrandr-dev libudev-dev libgl1-mesa-dev libflac-dev libogg-dev libvorbis-dev libvorbisenc2 libvorbisfile3 libopenal-dev libpthread-stubs0-dev libxcursor-dev mesa-utils
+      - name: Start Xvfb
+        run: |
+          Xvfb :99 -screen 0 1024x768x16 &
+          sleep 3
+          export DISPLAY=:99
       - name: Configure CMake
         # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
         # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
@@ -31,6 +36,18 @@ jobs:
         # Build your program with the given configuration
         run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
+      - name: Check Xvfb and DISPLAY
+        run: |
+          ps aux | grep Xvfb
+          echo $DISPLAY
+
+      - name: Check OpenGL in Xvfb
+        run: |
+          export DISPLAY=:99
+          glxinfo | grep "OpenGL"
+
       - name: Test
         # Execute tests
-        run: ${{github.workspace}}/build/tests/AllTests
+        run: |
+          export DISPLAY=:99
+          ${{github.workspace}}/build/tests/AllTests
