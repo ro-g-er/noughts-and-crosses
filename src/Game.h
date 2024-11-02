@@ -231,6 +231,7 @@ class Game {
     sf::Text gameOverText;
     int turnNumber = 0;
     sf::Text instructionsText;
+    friend class GameTests;
 
 public:
     /**

@@ -12,7 +12,8 @@ protected:
 
     void TearDown() override {
     }
-};
 
+    Winner getCheckWinCondition() { return game.checkWinCondition(); };
+};
 
 #endif//NOUGHTS_AND_CROSSES_GAMETESTS_H

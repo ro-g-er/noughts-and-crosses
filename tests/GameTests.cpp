@@ -8,3 +8,7 @@ TEST_F(GameTests, resetGame) {
     ASSERT_EQ(game.getGameState(), GameState::MENU);
     ASSERT_EQ(game.getTurnNumber(), 0);
 }
+
+TEST_F(GameTests, checkWinConditionGameNotStarted) {
+    ASSERT_EQ(getCheckWinCondition(), Winner::NONE);
+}

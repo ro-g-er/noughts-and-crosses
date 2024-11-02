@@ -24,8 +24,8 @@ Game::Game() {
     setupShapes();
     setupMenuText();
     setupInstructionsText();
-    initializeBoard();
 #endif
+    initializeBoard();
     gameState = GameState::MENU;
     winner = Winner::NONE;
     isXTurn = true;
@@ -104,7 +104,7 @@ void Game::handleMenuSelection(int i) {
 }
 
 void Game::drawMenu() {
-    for (const auto& text : menuText) {
+    for (const auto &text: menuText) {
         window.draw(text);
     }
 }
@@ -138,7 +138,7 @@ void Game::resetGame() {
 }
 
 void Game::initializeBoard() {
-    for (auto& row : board) {
+    for (auto &row: board) {
         row.fill(Mark::EMPTY);
     }
 }
@@ -163,7 +163,7 @@ void Game::setupShapes() {
     oShape.setFillColor(sf::Color::Transparent);
     oShape.setOutlineColor(sf::Color(192, 192, 192));// Dark Blue - 0.0.139
     oShape.setOutlineThickness(10.f);
-    for (auto & i : xShape) {
+    for (auto &i: xShape) {
         i.setSize(sf::Vector2f(160.f, 10.f));
         i.setFillColor(sf::Color(192, 192, 192));//Black
         i.setOrigin(80.f, 5.f);
@@ -187,7 +187,7 @@ void Game::loadFont() {
 }
 
 void Game::setupMenuText() {
-    std::array<std::string, 3> menuItems = { "Start Game", "Instructions", "Exit" };
+    std::array<std::string, 3> menuItems = {"Start Game", "Instructions", "Exit"};
     for (int i = 0; i < menuText.size(); i++) {
         menuText[i].setFont(font);
         menuText[i].setString(menuItems[i]);
