@@ -7,6 +7,7 @@
 class GameTests : public ::testing::Test {
 protected:
     Game game;
+    std::array<std::array<Mark, numRows>, numColumns> boardTest{};
     void SetUp() override {
     }
 
@@ -14,6 +15,10 @@ protected:
     }
 
     Winner getCheckWinCondition() { return game.checkWinCondition(); };
+
+    void setBoard(std::array<std::array<Mark, numRows>, numColumns> b) {
+        game.board = b;
+    }
 };
 
 #endif//NOUGHTS_AND_CROSSES_GAMETESTS_H

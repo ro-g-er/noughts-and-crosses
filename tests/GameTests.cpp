@@ -12,3 +12,9 @@ TEST_F(GameTests, resetGame) {
 TEST_F(GameTests, checkWinConditionGameNotStarted) {
     ASSERT_EQ(getCheckWinCondition(), Winner::NONE);
 }
+
+TEST_F(GameTests, checkWinConditionXWinHorizontal) {
+    boardTest.at(0).fill(Mark::X);
+    setBoard(boardTest);
+    ASSERT_EQ(getCheckWinCondition(), Winner::X);
+}

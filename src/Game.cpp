@@ -19,12 +19,12 @@ Game::Game() {
 #ifndef TEST
     window.create(sf::VideoMode(600, 600), "Noughts and Crosses");
     window.setFramerateLimit(60);
+#endif
     loadFont();
     setupGrid();
     setupShapes();
     setupMenuText();
     setupInstructionsText();
-#endif
     initializeBoard();
     gameState = GameState::MENU;
     winner = Winner::NONE;
@@ -173,16 +173,23 @@ void Game::setupShapes() {
 }
 
 void Game::loadFont() {
-    std::string fileName;
-#ifndef TEST
-    fileName = "../resources/ethn.otf";
-#else
-    fileName = "../../resources/ethn.otf";
-#endif
-    if (!font.loadFromFile(fileName)) {
-        throw std::runtime_error("Error loading font");
-    } else {
-        std::cout << "Font loaded successfully" << std::endl;
+    std::vector<std::string> paths = {
+            "../resources/ethn.otf",   // Local path
+            "../../resources/ethn.otf",// Test path
+            "./resources/ethn.otf"     // GitHub Actions or other CI environments
+    };
+
+    bool loaded = false;
+    for (const auto &path: paths) {
+        if (font.loadFromFile(path)) {
+            std::cout << "Font loaded successfully from " << path << std::endl;
+            loaded = true;
+            break;
+        }
+    }
+
+    if (!loaded) {
+        throw std::runtime_error("Error loading font: File not found in any specified path.");
     }
 }
 
