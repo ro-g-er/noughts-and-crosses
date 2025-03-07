@@ -4,15 +4,19 @@
 #include <sstream>
 
 Winner markToWinner(Mark mark) {
+    Winner returnValue = Winner::NONE;
     switch (mark) {
         case Mark::X:
-            return Winner::X;
+            returnValue = Winner::X;
+            break;
         case Mark::O:
-            return Winner::O;
+            returnValue = Winner::O;
+            break;
         case Mark::EMPTY:
-        default:
-            return Winner::NONE;
+            returnValue = Winner::NONE;
+            break;
     }
+    return returnValue;
 }
 
 Game::Game() {
@@ -178,19 +182,13 @@ void Game::loadFont() {
             "../../resources/ethn.otf",// Test path
             "./resources/ethn.otf"     // GitHub Actions or other CI environments
     };
-
-    bool loaded = false;
     for (const auto &path: paths) {
         if (font.loadFromFile(path)) {
             std::cout << "Font loaded successfully from " << path << std::endl;
-            loaded = true;
-            break;
+            return;
         }
     }
-
-    if (!loaded) {
-        throw std::runtime_error("Error loading font: File not found in any specified path.");
-    }
+    throw std::runtime_error("Error loading font: File not found in any specified path.");
 }
 
 void Game::setupMenuText() {
@@ -219,20 +217,22 @@ void Game::setupGameOver() {
 }
 
 void Game::handlePlayerInput(sf::Mouse::Button button) {
-    if (button == sf::Mouse::Left && gameState == GameState::PLAYING) {
-        sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-        int row = mousePos.y / 200;
-        int col = mousePos.x / 200;
-        if (row < numRows && col < numColumns && board[row][col] == Mark::EMPTY) {
-            board[row][col] = isXTurn ? Mark::X : Mark::O;
-            turnNumber++;
-            isXTurn = !isXTurn;
-            if (turnNumber > WINNING_TURN_THRESHOLD) {
-                winner = checkWinCondition();
-                if (winner != Winner::NONE) {
-                    gameState = GameState::GAME_OVER;
-                }
-            }
+    if (button != sf::Mouse::Left || gameState != GameState::PLAYING) {
+        return;
+    }
+    sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+    int row = mousePos.y / 200;
+    int col = mousePos.x / 200;
+    if (row >= numRows || col >= numColumns || board[row][col] != Mark::EMPTY) {
+        return;
+    }
+    board[row][col] = isXTurn ? Mark::X : Mark::O;
+    turnNumber++;
+    isXTurn = !isXTurn;
+    if (turnNumber > WINNING_TURN_THRESHOLD) {
+        winner = checkWinCondition();
+        if (winner != Winner::NONE) {
+            gameState = GameState::GAME_OVER;
         }
     }
 }
@@ -256,7 +256,7 @@ Winner Game::checkWinCondition() {
     return winner;
 }
 
-Winner Game::checkRows() {
+Winner Game::checkRows() const {
     for (const auto &row: board) {
         if (checkLine(row[ROW_1], row[ROW_2], row[ROW_3])) {
             return markToWinner(row[ROW_1]);
