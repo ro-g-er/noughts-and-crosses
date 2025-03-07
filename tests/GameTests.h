@@ -9,6 +9,9 @@ protected:
     Game game;
     std::array<std::array<Mark, numRows>, numColumns> boardTest{};
     void SetUp() override {
+        for (auto &row: boardTest) {
+            row.fill(Mark::EMPTY);
+        }
     }
 
     void TearDown() override {
