@@ -208,7 +208,7 @@ class Game {
      * @brief Checks all rows for a win condition.
      * @return The winner enum of the winning player.
      */
-    Winner checkRows();
+    Winner checkRows() const;
     /**
      * @brief Checks both diagonals for a win condition.
      * @return The winner enum of the winning player.
